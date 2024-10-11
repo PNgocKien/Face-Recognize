@@ -1,0 +1,103 @@
+<!DOCTYPE html>
+<html>
+<head>
+    <title>Nhận diện khuôn mặt</title>
+    <style>
+        .container {
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            margin: 20px;
+        }
+
+        .video-container {
+            width: 640px;
+            height: 480px;
+            border: 1px solid #ddd;
+            overflow: hidden;
+            margin-bottom: 20px;
+        }
+
+        .image-container {
+            display: flex;
+            justify-content: space-between;
+            width: 640px;
+        }
+
+        .image-box {
+            width: 310px;
+            height: 240px;
+            border: 1px solid #ddd;
+            text-align: center;
+            margin-bottom: 10px;
+        }
+
+        .image-box img {
+            max-width: 100%;
+            max-height: 100%;
+        }
+
+        .download-button {
+            padding: 10px 20px;
+            background-color: #4CAF50;
+            color: white;
+            border: none;
+            border-radius: 5px;
+            cursor: pointer;
+        }
+
+        .download-button:hover {
+            background-color: #3e8e41;
+        }
+    </style>
+</head>
+<body>
+    <div class="container">
+        <h1>Nhận diện khuôn mặt</h1>
+        <div class="video-container">
+            <img src="{{ url_for('video_feed') }}" alt="Video stream" id="video-stream">
+        </div>
+        <div class="image-container">
+            <div class="image-box" id="unknown-image">
+                <h2>Unknown</h2>
+                <img id="unknown-img" src="#" alt="Unknown image">
+                <button class="download-button" data-label="Unknown">Tải về</button>
+            </div>
+            <div class="image-box" id="shipper-image">
+                <h2>Shipper</h2>
+                <img id="shipper-img" src="#" alt="Shipper image">
+                <button class="download-button" data-label="Shipper">Tải về</button>
+            </div>
+        </div>
+    </div>
+
+    <script>
+        const videoStream = document.getElementById('video-stream');
+        const unknownImage = document.getElementById('unknown-image');
+        const unknownImg = document.getElementById('unknown-img');
+        const shipperImage = document.getElementById('shipper-image');
+        const shipperImg = document.getElementById('shipper-img');
+
+        const downloadButtons = document.querySelectorAll('.download-button');
+
+        // Xử lý sự kiện tải về
+        downloadButtons.forEach(button => {
+            button.addEventListener('click', () => {
+                const label = button.dataset.label;
+                const imgSrc = document.getElementById(`${label}-img`).src;
+                const timestamp = imgSrc.split('/').pop().split('.')[0];
+
+                const downloadLink = document.createElement('a');
+                downloadLink.href = imgSrc;
+                downloadLink.download = `${label}_${timestamp}.jpg`;
+                downloadLink.click();
+
+                const txtLink = document.createElement('a');
+                txtLink.href = `Notification/${label}/txt_${timestamp}.txt`;
+                txtLink.download = `${label}_${timestamp}.txt`;
+                txtLink.click();
+            });
+        });
+    </script>
+</body>
+</html>
